@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import tools.repocheck
 
 
 def get_args():
@@ -15,7 +16,8 @@ def get_args():
 
 def main():
     args = get_args()
-    print(args)
+    repo = args.repo  # Get PyGithub repo object instead
+    tools.repocheck.RepoCheck(repo).run()
 
 
 if __name__ == "__main__":
