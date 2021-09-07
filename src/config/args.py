@@ -1,0 +1,21 @@
+import argparse
+
+
+def get_arguments():
+    parser = argparse.ArgumentParser("GitHub Spellcheck Bot")
+    parser.add_argument(
+        "--handle",
+        help="Handle for repository",
+        required=True
+    )
+    parser.add_argument(
+        "--repo",
+        help="Repository to spellcheck",
+        required=True
+    )
+    parser.add_argument(
+        "--tasks",
+        help="Maximum tasks to run at once",
+        default=10
+    )
+    return parser.parse_args()
