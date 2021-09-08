@@ -1,8 +1,7 @@
-class Message:
-    pass
+import message.message
 
 
-class TaskMessage(Message):
+class TaskMessage(message.message.Message):
     pass
 
 
