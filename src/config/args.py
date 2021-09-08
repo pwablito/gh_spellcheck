@@ -9,8 +9,8 @@ def get_arguments():
         required=True
     )
     parser.add_argument(
-        "--repo",
-        help="Repository to spellcheck",
+        "--token",
+        help="Access token for Github",
         required=True
     )
     parser.add_argument(

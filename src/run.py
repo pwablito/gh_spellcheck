@@ -6,7 +6,7 @@ import control.master as control_master
 
 def main():
     args = config.args.get_arguments()
-    control_master.master_proc(args.handle, args.repo, args.tasks)
+    control_master.master_proc(args.handle, args.token, args.tasks)
 
 
 if __name__ == "__main__":

@@ -5,12 +5,28 @@ class TaskMessage(message.message.Message):
     pass
 
 
-class TaskCompletedMessage(TaskMessage):
-    def __init__(self, task):
-        self.task_id = task.id
+class ScrapeTaskMessage(TaskMessage):
+    def __init__(self, handle):
+        self.handle = handle
 
 
-class TaskFailedMessage(TaskMessage):
-    def __init__(self, task, error):
-        self.task_id = task.id
-        self.error = error
+class CloneTaskMessage(TaskMessage):
+    def __init__(self, handle, repo_name):
+        self.handle = handle
+        self.repo_name = repo_name
+
+
+class SpellcheckTaskMessage(TaskMessage):
+    def __init__(self, handle, repo_name, location):
+        self.handle = handle
+        self.repo_name = repo_name
+        self.location = location
+
+
+class ValidateTaskMessage(TaskMessage):
+    # TODO figure out how to implement this- should it send an email and wait for approval?
+    pass
+
+
+class PublishTaskMessage(TaskMessage):
+    pass
