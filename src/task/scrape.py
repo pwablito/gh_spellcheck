@@ -13,7 +13,8 @@ class ScrapeTask(task.Task):
         print("Scraping https://github.com/{}".format(self.handle))
         g = github.Github(self.token)
         for repo in g.get_user(self.handle).get_repos():
-            self.queue.put(message.task.CloneTaskMessage(self.handle, repo.name))
+            print("Found repo {}/{}".format(self.handle, repo.name))
+            self.queue.put(message.task.CloneTaskMessage(repo))
 
     def log_begin(self):
         print("Starting scrape for {}".format(self.handle))
