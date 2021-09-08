@@ -6,7 +6,7 @@ import error.message
 import task.scrape
 
 
-def queue_controller_proc(queue):
+def queue_controller_proc(queue, token):
     try:
         while True:
             msg = queue.get()
@@ -15,7 +15,7 @@ def queue_controller_proc(queue):
             elif isinstance(msg, message.task.TaskMessage):
                 new_task = None
                 if isinstance(msg, message.task.ScrapeTaskMessage):
-                    new_task = task.scrape.ScrapeTask(queue, msg.handle)
+                    new_task = task.scrape.ScrapeTask(queue, token, msg.handle)
                 if new_task:
                     worker = mp.Process(target=new_task.run, args=())
                     worker.start()
