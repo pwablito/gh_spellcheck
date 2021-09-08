@@ -11,7 +11,8 @@ class Task:
             self.do_task()
             self.log_end()
         except Exception as e:
-            self.queue.put(task_message.TaskFailedMessage(self, e))
+            # TODO add a task failure handler
+            print("Exception occurred: {}".format(e))
 
     def do_task(self):
         raise NotImplementedError

@@ -15,10 +15,9 @@ class CloneTaskMessage(TaskMessage):
         self.repo = repo
 
 
-class SpellcheckTaskMessage(TaskMessage):
-    def __init__(self, handle, repo_name, location):
-        self.handle = handle
-        self.repo_name = repo_name
+class SpellCheckTaskMessage(TaskMessage):
+    def __init__(self, repo, location):
+        self.repo = repo
         self.location = location
 
 

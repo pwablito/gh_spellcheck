@@ -4,6 +4,7 @@ import message.task
 import message.status
 import error.message
 import task.scrape
+import task.clone
 
 
 def queue_controller_proc(queue, token):
