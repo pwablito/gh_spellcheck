@@ -1,15 +1,20 @@
-import message.task as task_message
+import message.status
 
 
 class Task:
-    def __init__(self, queue):
-        self.queue = queue
+    def __init__(self, controller, task_id):
+        self.controller = controller
+        self.task_id = task_id
+
+    def signal(self, msg):
+        self.controller.send(msg)
 
     def run(self):
         try:
             self.log_begin()
             self.do_task()
             self.log_end()
+            self.signal(message.status.TaskFinishedMessage(self.task_id))
         except Exception as e:
             # TODO add a task failure handler
             print("Exception occurred: {}".format(e))

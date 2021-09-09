@@ -16,6 +16,7 @@ def get_arguments():
     parser.add_argument(
         "--tasks",
         help="Maximum tasks to run at once",
+        type=int,
         default=10
     )
     return parser.parse_args()

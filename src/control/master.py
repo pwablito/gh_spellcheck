@@ -5,20 +5,18 @@ import message.task
 
 def master_proc(start_handle, token, threads):
     try:
-        control_queue = mp.Queue()
+        controller = queue_control.QueueController(token, threads)
         queue_controller_process = mp.Process(
-            target=queue_control.queue_controller_proc,
-            args=(control_queue, token,)
+            target=controller.run,
+            args=()
         )
         queue_controller_process.start()
 
         # Insert starting point to queue
-        control_queue.put(message.task.ScrapeTaskMessage(start_handle))
+        controller.send(message.task.ScrapeTaskMessage(start_handle))
 
     except KeyboardInterrupt:
-        pass
-    except Exception as e:
-        print("Something went wrong: {}".format(e))
+        print("Interrupted by keyboard")
     finally:
         queue_controller_process.join()
     print("Finished master_proc")
