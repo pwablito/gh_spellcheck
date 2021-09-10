@@ -1,6 +1,7 @@
 import multiprocessing as mp
 import control.queue as queue_control
 import message.task
+import logging
 
 
 def master_proc(start_handle, token, threads):
@@ -16,7 +17,7 @@ def master_proc(start_handle, token, threads):
         controller.send(message.task.ScrapeTaskMessage(start_handle))
 
     except KeyboardInterrupt:
-        print("Interrupted by keyboard")
+        logging.fatal("Interrupted by keyboard: exiting")
     finally:
         queue_controller_process.join()
-    print("Finished master_proc")
+    logging.debug("Exiting master_proc")

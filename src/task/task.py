@@ -1,4 +1,5 @@
 import message.status
+import logging
 
 
 class Task:
@@ -11,19 +12,29 @@ class Task:
 
     def run(self):
         try:
-            self.log_begin()
+            logging.info("Starting task {}".format(self.task_id))
             self.do_task()
-            self.log_end()
+            logging.info("Finished task {}".format(self.task_id))
+            logging.info(
+                "Sending task finished status message for task {}".format(
+                    self.task_id
+                )
+            )
             self.signal(message.status.TaskFinishedMessage(self.task_id))
         except Exception as e:
-            # TODO add a task failure handler
-            print("Exception occurred: {}".format(e))
+            logging.error(
+                "Exception occurred in task {}: {}".format(
+                    self.task_id, e
+                )
+            )
+            logging.info(
+                "Sending task failed status message for task {}".format(
+                    self.task_id
+                )
+            )
+            self.signal(message.status.TaskFailedMessage(self.task_id))
+        except KeyboardInterrupt:
+            logging.fatal("Interrupted by keyboard: exiting")
 
     def do_task(self):
         raise NotImplementedError
-
-    def log_begin(self):
-        print("Starting task {}".format(self))
-
-    def log_end(self):
-        print("Finished task {}".format(self))
