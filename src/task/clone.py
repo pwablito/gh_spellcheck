@@ -2,6 +2,7 @@ import pygit2
 import tempfile
 import task.task as task
 import message.task
+import logging
 
 
 class CloneTask(task.Task):
@@ -12,10 +13,16 @@ class CloneTask(task.Task):
 
     def do_task(self):
         pygit2.clone_repository(self.repo.clone_url, self.destination)
-        self.signal(message.task.SpellCheckTaskMessage(self.repo, self.destination))
+        self.signal(message.task.SpellCheckTaskMessage(
+            self.repo, self.destination
+        ))
 
     def log_begin(self):
-        print("Starting clone for {} into {}".format(self.repo.name, self.destination))
+        logging.info("Starting clone for {} into {}".format(
+            self.repo.name, self.destination
+        ))
 
     def log_end(self):
-        print("Finished clone for {} into {}".format(self.repo.name, self.destination))
+        logging.info("Finished clone for {} into {}".format(
+            self.repo.name, self.destination
+        ))

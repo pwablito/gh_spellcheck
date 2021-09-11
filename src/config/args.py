@@ -19,4 +19,8 @@ def get_arguments():
         type=int,
         default=10
     )
+    parser.add_argument(
+        '-v', '--verbose',
+        action='count', default=0
+    )
     return parser.parse_args()

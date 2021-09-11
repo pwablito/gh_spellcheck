@@ -22,7 +22,6 @@ class SpellCheckTaskMessage(TaskMessage):
 
 
 class ValidateTaskMessage(TaskMessage):
-    # TODO figure out how to implement this- should it send an email and wait for approval?
     pass
 
 

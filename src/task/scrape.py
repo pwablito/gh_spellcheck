@@ -1,4 +1,5 @@
 import github
+import logging
 import task.task as task
 import message.task
 import message.status
@@ -16,7 +17,7 @@ class ScrapeTask(task.Task):
             self.signal(message.task.CloneTaskMessage(repo))
 
     def log_begin(self):
-        print("Starting scrape for {}".format(self.handle))
+        logging.info("Starting scrape for {}".format(self.handle))
 
     def log_end(self):
-        print("Finished scrape for {}".format(self.handle))
+        logging.info("Finished scrape for {}".format(self.handle))
