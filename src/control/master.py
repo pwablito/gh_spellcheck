@@ -4,9 +4,9 @@ import message.task
 import logging
 
 
-def master_proc(start_handle, token, threads, log_level):
+def master_proc(start_handle, token, tasks, log_level):
     try:
-        controller = queue_control.QueueController(log_level, token, threads)
+        controller = queue_control.QueueController(log_level, token, tasks)
         queue_controller_process = mp.Process(
             target=controller.run,
             args=()

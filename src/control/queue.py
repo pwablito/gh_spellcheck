@@ -20,7 +20,7 @@ class QueueController(proc.template.Process):
         self.token = token
         self.max_tasks = max_tasks - 2  # the controller counts as 2
         logging.info(
-            "Starting queue controller with a maximum of {} worker threads".format(  # noqa
+            "Starting queue controller with a maximum of {} worker tasks".format(  # noqa
                 self.max_tasks
             )
         )
@@ -54,8 +54,15 @@ class QueueController(proc.template.Process):
                 if isinstance(status_msg, message.status.TerminateMessage):
                     logging.info("Got terminate message")
                     raise NotImplementedError
-                self.task_sem.release()
-                logging.debug("task_sem released")
+                if isinstance(status_msg, message.status.TaskFinishedMessage):
+                    logging.info("Got task finished message")
+                    self.task_sem.release()
+                    logging.debug("task_sem released")
+                elif isinstance(status_msg, message.status.TaskStartedMessage):
+                    logging.info("Got task started message")
+                elif isinstance(status_msg, message.status.TaskFailedMessage):
+                    logging.info("Got task failed message")
+                    raise NotImplementedError
         except KeyboardInterrupt:
             logging.fatal("Interrupted by keyboard: exiting")
 
@@ -66,10 +73,11 @@ class QueueController(proc.template.Process):
             status_watcher.start()
             try:
                 while True:
-                    logging.info("Waiting for task message")
+                    logging.debug("Waiting for task message")
                     task_msg = self.task_queue.get()
-                    logging.info("Recieved task message from queue")
+                    logging.debug("Recieved task message from queue")
                     self.task_sem.acquire()
+                    logging.debug("task_sem acquired")
                     if not isinstance(task_msg, message.task.TaskMessage):
                         logging.error("Got invalid message: {}".format(
                             task_msg
@@ -94,12 +102,16 @@ class QueueController(proc.template.Process):
                                 self, new_task_id, task_msg.repo
                             )
                         if new_task:
-                            worker = mp.Process(target=new_task.run, args=())
+                            worker = mp.Process(target=new_task.run)
                             worker.start()
+                            self.status_queue.put(
+                                message.status.TaskStartedMessage(new_task_id)
+                            )
                         else:
                             raise Exception
             except KeyError:
                 logging.error("Got invalid message")
+            logging.warn("Killing status queue watcher")
             status_watcher.terminate()
         except KeyboardInterrupt:
             logging.fatal("Interrupted by keyboard: exiting")

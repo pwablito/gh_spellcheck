@@ -9,6 +9,12 @@ class TerminateMessage(StatusMessage):
     pass
 
 
+class TaskStartedMessage(StatusMessage):
+    def __init__(self, task_id):
+        super().__init__()
+        self.task_id = task_id
+
+
 class TaskFinishedMessage(StatusMessage):
     def __init__(self, task_id):
         super().__init__()
