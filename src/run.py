@@ -7,17 +7,16 @@ import logging
 
 def main():
     args = config.args.get_arguments()
-    if args.verbose > 0:
-        if args.verbose == 1:
-            logging.basicConfig(level=logging.WARNING)
-        elif args.verbose == 2:
-            logging.basicConfig(level=logging.INFO)
-        elif args.verbose == 3:
-            logging.basicConfig(level=logging.DEBUG)
-        else:
-            logging.basicConfig(level=logging.NOTSET)
+    log_level = logging.WARNING
+    if args.verbose == 2:
+        log_level = logging.INFO
+    elif args.verbose == 3:
+        log_level = logging.DEBUG
+    elif args.verbose >= 4:
+        log_level = logging.NOTSET
+    logging.basicConfig(level=log_level)
     logging.debug("Starting master_proc")
-    control_master.master_proc(args.handle, args.token, args.tasks)
+    control_master.master_proc(args.handle, args.token, args.tasks, log_level)
 
 
 if __name__ == "__main__":

@@ -7,10 +7,12 @@ import message.status
 import error.message
 import task.scrape
 import task.clone
+import proc.template
 
 
-class QueueController:
-    def __init__(self, token, max_tasks):
+class QueueController(proc.template.Process):
+    def __init__(self, log_level, token, max_tasks):
+        super().__init__(log_level)
         self.task_queue = mp.Queue()
         logging.debug("Created task queue")
         self.status_queue = mp.Queue()
@@ -28,6 +30,7 @@ class QueueController:
         ))
 
     def send(self, msg):
+        logging.debug("Got message, deciding queue placement")
         if isinstance(msg, message.status.StatusMessage):
             logging.debug("Inserting message into status queue")
             self.status_queue.put(msg)
@@ -38,9 +41,11 @@ class QueueController:
             raise error.message.InvalidMessageError
 
     def watch_status(self):
+        self.init_logging()
         logging.info("Started status queue watcher")
         try:
             while True:
+                logging.info("Waiting for status message")
                 status_msg = self.status_queue.get()
                 logging.info("Got status message")
                 if not isinstance(status_msg, message.status.StatusMessage):
@@ -55,12 +60,15 @@ class QueueController:
             logging.fatal("Interrupted by keyboard: exiting")
 
     def run(self):
+        self.init_logging()
         try:
             status_watcher = mp.Process(target=self.watch_status)
             status_watcher.start()
             try:
                 while True:
+                    logging.info("Waiting for task message")
                     task_msg = self.task_queue.get()
+                    logging.info("Recieved task message from queue")
                     self.task_sem.acquire()
                     if not isinstance(task_msg, message.task.TaskMessage):
                         logging.error("Got invalid message: {}".format(
