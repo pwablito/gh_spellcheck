@@ -7,6 +7,7 @@ import message.status
 import error.message
 import task.scrape
 import task.clone
+import task.spellcheck
 import proc.template
 
 
@@ -101,6 +102,20 @@ class QueueController(proc.template.Process):
                             new_task = task.clone.CloneTask(
                                 self, new_task_id, task_msg.repo
                             )
+                        elif isinstance(
+                            task_msg, message.task.SpellCheckTaskMessage
+                        ):
+                            new_task = task.spellcheck.SpellCheckTask(
+                                self, new_task_id, task_msg.repo,
+                                task_msg.location
+                            )
+                        elif isinstance(
+                            task_msg, message.task.CommitTaskMessage
+                        ):
+                            new_task = task.commit.CommitTask(
+                                self, new_task_id, task_msg.repo,
+                                task_msg.location
+                            )
                         if new_task:
                             worker = mp.Process(target=new_task.run)
                             worker.start()
@@ -108,7 +123,7 @@ class QueueController(proc.template.Process):
                                 message.status.TaskStartedMessage(new_task_id)
                             )
                         else:
-                            raise Exception
+                            raise error.message.InvalidMessageError
             except KeyError:
                 logging.error("Got invalid message")
             logging.warn("Killing status queue watcher")

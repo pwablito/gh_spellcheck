@@ -37,6 +37,7 @@ class Task(proc.template.Process):
                 )
             )
             self.signal(message.status.TaskFailedMessage(self.task_id))
+            raise e
         except KeyboardInterrupt:
             logging.fatal("Interrupted by keyboard: exiting")
         sys.exit()

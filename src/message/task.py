@@ -21,6 +21,12 @@ class SpellCheckTaskMessage(TaskMessage):
         self.location = location
 
 
+class CommitTaskMessage(TaskMessage):
+    def __init__(self, repo, location):
+        self.repo = repo
+        self.location = location
+
+
 class PublishForkTaskMessage(TaskMessage):
     def __init__(self, repo, location):
         self.repo = repo
