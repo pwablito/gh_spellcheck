@@ -1,0 +1,6 @@
+spelling_fix_branch_name = 'spelling-fix'
+commit_message = 'Spelling fix'
+commit_email = 'ghspellcheckbot@gmail.com'
+commit_name = 'Github Spellcheck Bot'
+github_username = 'ghspellcheckbot'
+fork_remote_name = 'spellfork'

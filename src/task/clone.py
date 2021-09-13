@@ -19,10 +19,10 @@ class CloneTask(task.Task):
 
     def log_begin(self):
         logging.info("Starting clone for {} into {}".format(
-            self.repo.name, self.destination
+            self.repo.full_name, self.destination
         ))
 
     def log_end(self):
         logging.info("Finished clone for {} into {}".format(
-            self.repo.name, self.destination
+            self.repo.full_name, self.destination
         ))

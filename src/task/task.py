@@ -1,6 +1,7 @@
 import message.status
 import proc.template
 import logging
+import sys
 
 
 class Task(proc.template.Process):
@@ -38,6 +39,7 @@ class Task(proc.template.Process):
             self.signal(message.status.TaskFailedMessage(self.task_id))
         except KeyboardInterrupt:
             logging.fatal("Interrupted by keyboard: exiting")
+        sys.exit()
 
     def do_task(self):
         raise NotImplementedError
