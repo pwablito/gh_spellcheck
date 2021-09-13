@@ -15,7 +15,6 @@ class ScrapeTask(task.Task):
         g = github.Github(self.token)
         for repo in g.get_user(self.handle).get_repos():
             self.signal(message.task.CloneTaskMessage(repo))
-            break
 
     def log_begin(self):
         logging.info("Starting scrape for {}".format(self.handle))
