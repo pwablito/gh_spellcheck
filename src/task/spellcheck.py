@@ -1,4 +1,5 @@
 import task.task as task
+import message.task
 import logging
 import textblob
 import os
@@ -16,16 +17,23 @@ class SpellCheckTask(task.Task):
         super().__init__(controller, task_id)
         self.repo = repo
         self.location = location
+        self.changes = False
 
     def do_task(self):
         self.correct_dir(self.location)
+        if self.changes:
+            logging.info("Spelling changes found, signalling for commit and pull request")
+            self.signal(message.task.CommitTaskMessage(self.repo, self.location))
+        else:
+            self.signal(message.task.CleanupTaskMessage(self.repo, self.location))
+            logging.info("No spelling changes found, signalling for cleanup")
 
     def correct_dir(self, location):
         for file in self.files_in_directory(location):
-            logging.info("Correcing spelling changes in file {}".format(file))
+            logging.debug("Correcing spelling changes in file {}".format(file))
             self.correct_file(file)
         for directory in self.dirs_in_directory(location):
-            logging.info("Correcting spelling changes in directory {}".format(
+            logging.debug("Correcting spelling changes in directory {}".format(
                 directory
             ))
             self.correct_dir(directory)
@@ -52,6 +60,8 @@ class SpellCheckTask(task.Task):
         f = open(filename, "r")
         content = f.read()
         corrected_content = textblob.TextBlob(content).correct()
+        if corrected_content != content:
+            self.changes = True
         f.close()
         f = open(filename, "w")
         f.write(str(corrected_content))

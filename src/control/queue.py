@@ -46,7 +46,7 @@ class QueueController(proc.template.Process):
         logging.info("Started status queue watcher")
         try:
             while True:
-                logging.info("Waiting for status message")
+                logging.debug("Waiting for status message")
                 status_msg = self.status_queue.get()
                 logging.info("Got status message")
                 if not isinstance(status_msg, message.status.StatusMessage):
@@ -116,6 +116,13 @@ class QueueController(proc.template.Process):
                                 self, new_task_id, task_msg.repo,
                                 task_msg.location
                             )
+                        elif isinstance(
+                            task_msg, message.task.PublishForkTaskMessage
+                        ):
+                            new_task = task.fork.PublishForkTask(
+                                self, new_task_id, task_msg.repo,
+                                task_msg.location
+                            )
                         if new_task:
                             worker = mp.Process(target=new_task.run)
                             worker.start()
@@ -124,8 +131,9 @@ class QueueController(proc.template.Process):
                             )
                         else:
                             raise error.message.InvalidMessageError
-            except KeyError:
+            except KeyError as e:
                 logging.error("Got invalid message")
+                raise e
             logging.warn("Killing status queue watcher")
             status_watcher.terminate()
         except KeyboardInterrupt:

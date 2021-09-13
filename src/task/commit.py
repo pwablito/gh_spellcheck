@@ -1,4 +1,5 @@
 import task.task as task
+import message.task
 import config.github
 import logging
 import os
@@ -12,13 +13,15 @@ class CommitTask(task.Task):
 
     def do_task(self):
         os.system(
-            "git checkout -b {} && git commit -a --author=\"{} <{}>\" -m \"{}\"".format(  # noqa
+            "cd {} && git checkout -b {} && git commit -a --author=\"{} <{}>\" -m \"{}\"".format(  # noqa
+                self.location,
                 config.github.spelling_fix_branch_name,
                 config.github.commit_name,
                 config.github.commit_email,
                 config.github.commit_message
             )
         )
+        self.signal(message.task.PublishForkTaskMessage(self.repo, self.location))
 
     def log_begin(self):
         logging.info("Starting spellcheck for {}".format(self.repo.full_name))
