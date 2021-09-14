@@ -7,6 +7,8 @@ import message.status
 import error.message
 import task.scrape
 import task.clone
+import task.commit
+import task.fork
 import task.spellcheck
 import proc.template
 

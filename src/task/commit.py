@@ -13,7 +13,7 @@ class CommitTask(task.Task):
 
     def do_task(self):
         os.system(
-            "cd {} && git checkout -b {} && git commit -a --author=\"{} <{}>\" -m \"{}\"".format(  # noqa
+            "cd {} && git checkout -b {} && git config --local user.name \"{}\" && git config --local user.email \"{}\" && git commit -am \"{}\"".format(  # noqa
                 self.location,
                 config.github.spelling_fix_branch_name,
                 config.github.commit_name,

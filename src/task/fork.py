@@ -2,6 +2,7 @@ import task.task as task
 import config.github
 import logging
 import os
+import github
 
 
 class PublishForkTask(task.Task):
@@ -15,12 +16,20 @@ class PublishForkTask(task.Task):
         self.branch_name = branch_name
 
     def do_task(self):
+        try:
+            g = github.Github(self.controller.token)
+            g.get_user().get_repo(self.repo.name).delete()
+        except Exception:
+            pass
         forked_repo = self.repo.create_fork()
-        os.system("cd {} && git remote add {} {} && git push {} {}".format(
+        cmd = "cd {} && git remote add {} https://{}@github.com/{} && git push {} {}".format(
             self.repo_dir, config.github.fork_remote_name,
-            forked_repo.ssh_url, config.github.fork_remote_name,
+            self.controller.token, forked_repo.full_name,
+            config.github.fork_remote_name,
             config.github.spelling_fix_branch_name
-        ))
+        )
+        logging.debug("Executing \"{}\"".format(cmd))
+        os.system(cmd)
 
     def log_begin(self):
         logging.info("Starting fork for {}".format(self.repo.full_name))
