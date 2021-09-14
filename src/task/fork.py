@@ -17,10 +17,12 @@ class PublishForkTask(task.Task):
 
     def do_task(self):
         try:
+            # Delete fork if exists
             g = github.Github(self.controller.token)
             g.get_user().get_repo(self.repo.name).delete()
+            logging.info("Deleted fork of {}".format(self.repo.full_name))
         except Exception:
-            pass
+            logging.info("Did not delete fork of {}".format(self.repo.full_name))
         forked_repo = self.repo.create_fork()
         cmd = "cd {} && git remote add {} https://{}@github.com/{} && git push {} {}".format(
             self.repo_dir, config.github.fork_remote_name,
