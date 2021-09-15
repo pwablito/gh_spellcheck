@@ -22,9 +22,11 @@ class PublishForkTask(task.Task):
             g.get_user().get_repo(self.repo.name).delete()
             logging.info("Deleted fork of {}".format(self.repo.full_name))
         except Exception:
-            logging.info("Did not delete fork of {}".format(self.repo.full_name))
+            logging.info("Did not delete fork of {}".format(
+                self.repo.full_name
+            ))
         forked_repo = self.repo.create_fork()
-        cmd = "cd {} && git remote add {} https://{}@github.com/{} && git push {} {}".format(
+        cmd = "cd {} && git remote add {} https://{}@github.com/{} && git push {} {}".format(  # noqa
             self.repo_dir, config.github.fork_remote_name,
             self.controller.token, forked_repo.full_name,
             config.github.fork_remote_name,
@@ -32,7 +34,9 @@ class PublishForkTask(task.Task):
         )
         logging.debug("Executing \"{}\"".format(cmd))
         os.system(cmd)
-        self.signal(message.task.PullRequestTaskMessage(self.repo, forked_repo, self.repo_dir, self.branch_name))
+        self.signal(message.task.PullRequestTaskMessage(
+            self.repo, forked_repo, self.repo_dir, self.branch_name
+        ))
 
     def log_begin(self):
         logging.info("Starting fork for {}".format(self.repo.full_name))

@@ -22,10 +22,16 @@ class SpellCheckTask(task.Task):
     def do_task(self):
         self.correct_dir(self.location)
         if self.changes:
-            logging.info("Spelling changes found, signalling for commit and pull request")
-            self.signal(message.task.CommitTaskMessage(self.repo, self.location))
+            logging.info(
+                "Spelling changes found, signalling for commit"
+            )
+            self.signal(
+                message.task.CommitTaskMessage(self.repo, self.location)
+            )
         else:
-            self.signal(message.task.CleanupTaskMessage(self.repo, self.location))
+            self.signal(message.task.CleanupTaskMessage(
+                self.repo, self.location
+            ))
             logging.info("No spelling changes found, signalling for cleanup")
 
     def correct_dir(self, location):

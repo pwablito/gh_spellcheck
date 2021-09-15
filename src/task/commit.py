@@ -11,7 +11,9 @@ class CommitTask(task.Task):
         super().__init__(controller, task_id)
         self.repo = repo
         self.location = location
-        self.branch_name = config.github.spelling_fix_branch_name + "-" + datetime.now().strftime("%d-%m-%Y-%H%M%S")
+        self.branch_name = config.github.spelling_fix_branch_name + "-" + datetime.now().strftime(  # noqa
+            "%d-%m-%Y-%H%M%S"
+        )
 
     def do_task(self):
         os.system(
@@ -23,7 +25,9 @@ class CommitTask(task.Task):
                 config.github.commit_message
             )
         )
-        self.signal(message.task.PublishForkTaskMessage(self.repo, self.location, self.branch_name))
+        self.signal(message.task.PublishForkTaskMessage(
+            self.repo, self.location, self.branch_name
+        ))
 
     def log_begin(self):
         logging.info("Starting spellcheck for {}".format(self.repo.full_name))
