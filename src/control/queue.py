@@ -9,6 +9,7 @@ import task.scrape
 import task.clone
 import task.commit
 import task.fork
+import task.pullrequest
 import task.spellcheck
 import proc.template
 
@@ -123,7 +124,15 @@ class QueueController(proc.template.Process):
                         ):
                             new_task = task.fork.PublishForkTask(
                                 self, new_task_id, task_msg.repo,
-                                task_msg.location
+                                task_msg.location, task_msg.branch_name
+                            )
+                        elif isinstance(
+                            task_msg, message.task.PullRequestTaskMessage
+                        ):
+                            new_task = task.pullrequest.PullRequestTask(
+                                self, new_task_id, task_msg.upstream_repo,
+                                task_msg.forked_repo, task_msg.location,
+                                task_msg.branch
                             )
                         if new_task:
                             worker = mp.Process(target=new_task.run)

@@ -3,6 +3,7 @@ import message.task
 import config.github
 import logging
 import os
+from datetime import datetime
 
 
 class CommitTask(task.Task):
@@ -10,18 +11,19 @@ class CommitTask(task.Task):
         super().__init__(controller, task_id)
         self.repo = repo
         self.location = location
+        self.branch_name = config.github.spelling_fix_branch_name + "-" + datetime.now().strftime("%d-%m-%Y-%H%M%S")
 
     def do_task(self):
         os.system(
             "cd {} && git checkout -b {} && git config --local user.name \"{}\" && git config --local user.email \"{}\" && git commit -am \"{}\"".format(  # noqa
                 self.location,
-                config.github.spelling_fix_branch_name,
+                self.branch_name,
                 config.github.commit_name,
                 config.github.commit_email,
                 config.github.commit_message
             )
         )
-        self.signal(message.task.PublishForkTaskMessage(self.repo, self.location))
+        self.signal(message.task.PublishForkTaskMessage(self.repo, self.location, self.branch_name))
 
     def log_begin(self):
         logging.info("Starting spellcheck for {}".format(self.repo.full_name))

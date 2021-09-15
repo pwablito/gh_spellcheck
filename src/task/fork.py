@@ -1,5 +1,6 @@
 import task.task as task
 import config.github
+import message.task
 import logging
 import os
 import github
@@ -7,8 +8,7 @@ import github
 
 class PublishForkTask(task.Task):
     def __init__(
-        self, controller, task_id, repo, repo_dir,
-        branch_name=config.github.spelling_fix_branch_name
+        self, controller, task_id, repo, repo_dir, branch_name
     ):
         super().__init__(controller, task_id)
         self.repo = repo  # Github repo object
@@ -28,10 +28,11 @@ class PublishForkTask(task.Task):
             self.repo_dir, config.github.fork_remote_name,
             self.controller.token, forked_repo.full_name,
             config.github.fork_remote_name,
-            config.github.spelling_fix_branch_name
+            self.branch_name
         )
         logging.debug("Executing \"{}\"".format(cmd))
         os.system(cmd)
+        self.signal(message.task.PullRequestTaskMessage(self.repo, forked_repo, self.repo_dir, self.branch_name))
 
     def log_begin(self):
         logging.info("Starting fork for {}".format(self.repo.full_name))
