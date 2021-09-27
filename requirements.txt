@@ -1,5 +1,4 @@
 PyGithub
 argparse
 pygit2
-shutil
-multiprocessing
+textblob
