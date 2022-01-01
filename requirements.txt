@@ -2,3 +2,5 @@ PyGithub
 argparse
 pygit2
 textblob
+flake8
+coverage
